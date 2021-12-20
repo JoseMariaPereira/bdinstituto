@@ -27,7 +27,8 @@ public class AltasManager {
 			
 			switch (opcion) {
 			case "1":
-				
+				System.out.println("Creando nueva entrada para Profesores");
+				AltaProfesor.AltaDeProfesor(scan);
 				break;
 			case "2": 
 				break;
