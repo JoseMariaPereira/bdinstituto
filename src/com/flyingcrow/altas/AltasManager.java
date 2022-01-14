@@ -12,10 +12,10 @@ public class AltasManager {
 		this.connection = connection;
 	}
 	
-	private void AltasEntidades(Scanner scan) {
+	public void AltasMenu(Scanner scan) {
 		String opcion;
 		do {
-			System.out.print("1.- Alta Profesor"
+			System.out.print("\n1.- Alta Profesor"
 					+ "\n2.- Alta Alumno"
 					+ "\n3.- Alta Asignatura"
 					+ "\n4.- Alta Nota"
@@ -25,14 +25,20 @@ public class AltasManager {
 			
 			opcion = scan.nextLine();
 			
+			System.out.println();
+			
 			switch (opcion) {
 			case "1":
-				System.out.println("Creando nueva entrada para Profesores");
-				AltaProfesor.AltaDeProfesor(scan);
+				System.out.println("Creando nueva entrada para Profesores...");
+				connection.InsertProfesor(AltaProfesor.AltaDeProfesor(scan));
 				break;
-			case "2": 
+			case "2":
+				System.out.println("Creando nueva entrada para Alumnos...");
+				connection.InsertAlumno(AltaAlumno.AltaDeAlumno(scan));
 				break;
-			case "3": 
+			case "3":
+				System.out.println("Creando nueva entrada para Asignatura...");
+				
 				break;
 			case "4": 
 				break;
