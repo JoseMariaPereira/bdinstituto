@@ -2,11 +2,17 @@ package com.flyingcrow.bbdd;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 import com.flyingcrow.modelo.Alumno;
+import com.flyingcrow.modelo.Asignatura;
+import com.flyingcrow.modelo.Nota;
 import com.flyingcrow.modelo.Profesor;
+import com.mysql.cj.protocol.Resultset;
 
 public class ConectionManager {
 	
@@ -99,9 +105,43 @@ public class ConectionManager {
 	}
 	
 	/**
-	 * Inserta un profesor
+	 * @return devuelve un lista de profesores de la bbdd
+	 */
+	public ArrayList<Profesor> ReadAllProfesores() {
+		ArrayList<Profesor> profesores = new ArrayList<>();
+		try {
+			ResultSet result = statement.executeQuery("SELECT * FROM profesor");
+			while(result.next()) {
+				profesores.add(new Profesor(result.getString(1), result.getString(2), result.getString(3)));
+			}			
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+		}
+		return profesores;
+	}
+	
+	/**
+	 * @return devuelve un profesor especifico de la bbdd
+	 */
+	public Profesor ReadProfesor(String dni) {
+		Profesor profesor = null;
+		try {
+			ResultSet result = statement.executeQuery("SELECT * FROM profesor WHERE dni = " + dni);
+			if (result.next()) {
+				profesor = new Profesor(result.getString(1), result.getString(2), result.getString(3));
+			}
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+		}
+		return profesor;
+	}
+	
+	/**
+	 * Inserta un alumno
 	 * 
-	 * @param profesor el profesor a insertar
+	 * @param alumno el alumno a insertar
 	 * @return devuelve true si se ha insertado y false si ha ocurrido algun error
 	 */
 	public boolean InsertAlumno(Alumno alumno) {
@@ -109,6 +149,112 @@ public class ConectionManager {
 		try {
 			statement.executeUpdate("insert into alumno (codigoalumno, nombre) values('" + alumno.getCodigoAlumno() + "', '" + alumno.getNombre() + "')");
 			System.out.println("Alumno:\n" + alumno + "\n Insertado correctamente");
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+			returnValue = false;
+		}
+		return returnValue;
+	}
+	
+	/**
+	 * @return devuelve un lista de alumnos de la bbdd
+	 */
+	public ArrayList<Alumno> ReadAllAlumnos() {
+		ArrayList<Alumno> alumnos = new ArrayList<>();
+		try {
+			ResultSet result = statement.executeQuery("SELECT * FROM alumno");
+			while(result.next()) {
+				alumnos.add(new Alumno(result.getString(1), result.getString(3), result.getString(2)));
+			}			
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+		}
+		return alumnos;
+	}
+	
+	/**
+	 * @return devuelve un alumno especifico de la bbdd
+	 */
+	public Alumno ReadAlumno(String idal) {
+		Alumno alumno = null;
+		try {
+			ResultSet result = statement.executeQuery("SELECT * FROM alumno WHERE idal = " + idal);
+			if (result.next()) {
+				alumno = new Alumno(result.getString(1), result.getString(3), result.getString(2));
+			}
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+		}
+		return alumno;
+	}
+	
+	/**
+	 * Inserta una asignatura
+	 * 
+	 * @param asignatura el asignatura a insertar
+	 * @return devuelve true si se ha insertado y false si ha ocurrido algun error
+	 */
+	public boolean InsertAsignatura(Asignatura asignatura) {
+		boolean returnValue = true;
+		try {
+			statement.executeUpdate("insert into asignatura (codigoasignatura, nombreciclo) values('" + asignatura.getCodigoAsugnatura() + "', '" + asignatura.getNombre() + "')");
+			System.out.println("Asignatura:\n" + asignatura + "\n Insertado correctamente");
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+			returnValue = false;
+		}
+		return returnValue;
+	}
+	
+	/**
+	 * @return devuelve un lista de asignaturas de la bbdd
+	 */
+	public ArrayList<Asignatura> ReadAllAsignaturas() {
+		ArrayList<Asignatura> asignaturas = new ArrayList<>();
+		try {
+			ResultSet result = statement.executeQuery("SELECT * FROM asignatura");
+			while(result.next()) {
+				asignaturas.add(new Asignatura(result.getString(1), result.getString(3), result.getString(2)));
+			}			
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+		}
+		return asignaturas;
+	}
+	
+	/**
+	 * @return devuelve un lista de asignaturas de la bbdd
+	 */
+	public Asignatura ReadAsignatura(String idas) {
+		Asignatura asignatura = null;
+		try {
+			ResultSet result = statement.executeQuery("SELECT * FROM asignatura * WHERE idas = " + idas);
+			if(result.next()) {
+				asignatura = new Asignatura(result.getString(1), result.getString(3), result.getString(2));
+			}			
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+		}
+		return asignatura;
+	}
+	
+	/**
+	 * Inserta una nota
+	 * 
+	 * @param nota el nota a insertar
+	 * @return devuelve true si se ha insertado y false si ha ocurrido algun error
+	 */
+	public boolean InsertNota(Nota nota) {
+		boolean returnValue = true;
+		try {
+			statement.executeUpdate("insert into notas values('" + nota.getFecha().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "', '" + nota.getAlumno().getIdal() + "', '" + nota.getAsignatura().getIdas() + "', '" + nota.getNota() + "')");
+			System.out.println("Nota:\n" + nota + "\n Insertado correctamente");
 		} catch (SQLException e) {
 			System.out.println("Ha ocurrido un error...");
 			System.out.println("\n" + e.getMessage());

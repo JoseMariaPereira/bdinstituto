@@ -30,12 +30,12 @@ public class Asignatura {
 	public String getCodigoAsugnatura() {
 		return codigoAsignatura;
 	}
-	
-	
+
 	@Override
 	public String toString() {
-		return "Nombre del ciclo: " + getNombre()
-				+ "\nID: " + getIdas()
-				+ "\nCodigo Asignatura: " + getCodigoAsugnatura();
+		return "Asignatura [idas=" + idas + ", nombreCiclo=" + nombreCiclo + ", codigoAsignatura=" + codigoAsignatura
+				+ "]";
 	}
+
+	
 }

@@ -3,6 +3,8 @@ package com.flyingcrow.altas;
 import java.util.Scanner;
 
 import com.flyingcrow.bbdd.ConectionManager;
+import com.flyingcrow.modelo.Nota;
+import com.flyingcrow.modelo.Ternaria;
 
 public class AltasManager {
 	
@@ -38,11 +40,21 @@ public class AltasManager {
 				break;
 			case "3":
 				System.out.println("Creando nueva entrada para Asignatura...");
-				
+				connection.InsertAsignatura(AltaAsignatura.AltaDeAsignaturas(scan));
 				break;
-			case "4": 
+			case "4":
+				System.out.println("Creando nueva nota...");
+				Nota n = AltaNotas.AltaDeNotas(scan, connection);
+				if (n != null) {
+					connection.InsertNota(n);
+				}
 				break;
 			case "5": 
+				System.out.println("Creando nueva relacion...");
+				Ternaria t = AltaTernaria.AltaDeTernaria(scan, connection);
+				if (t != null) {
+					
+				}
 				break;
 			case "6":
 				System.out.println("Volviendo...");

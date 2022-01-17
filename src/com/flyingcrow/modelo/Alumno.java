@@ -30,12 +30,11 @@ public class Alumno {
 	public String getCodigoAlumno() {
 		return codigoAlumno;
 	}
-	
-	
+
 	@Override
 	public String toString() {
-		return "Nombre: " + getNombre()
-				+ "\nID: " + getIdal()
-				+ "\nCodigo Alumno: " + getCodigoAlumno();
+		return "Alumno [idal=" + idal + ", nombre=" + nombre + ", codigoAlumno=" + codigoAlumno + "]";
 	}
+
+	
 }

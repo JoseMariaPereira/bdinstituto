@@ -31,13 +31,10 @@ public class Profesor {
 	public void setTitulacion(String titulacion) {
 		this.titulacion = titulacion;
 	}
-	
-	
+
 	@Override
 	public String toString() {
-		return "Nombre: " + getNombre()
-				+ "\nDNI: " + getDni()
-				+ "\nTitulación: " + getTitulacion();
+		return "Profesor [dni=" + dni + ", nombre=" + nombre + ", titulacion=" + titulacion + "]";
 	}
 	
 	
