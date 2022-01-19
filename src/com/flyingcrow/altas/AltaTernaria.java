@@ -22,19 +22,17 @@ public class AltaTernaria {
 			return null;
 		}
 		
-		System.out.println("Selecciona un alumno de la base de datos...\n");
+		System.out.println("\nSelecciona un alumno de la base de datos...");
 		
 		alumnos.forEach(a->System.out.println(a));
 
-		System.out.print("\nMarca el id del alumno: ");
+		System.out.print("Marca el id del alumno: ");
 		Alumno alumno = connection.ReadAlumno(scan.nextLine());
 		
 		if (alumno == null) {
 			System.out.println("Alumno no encontrado...");
 			return null;
 		}
-		
-		System.out.println("Alumno: " + alumno + " seleccionado!");
 		
 		ArrayList<Asignatura> asignaturas = connection.ReadAllAsignaturas();
 		
@@ -54,18 +52,17 @@ public class AltaTernaria {
 			System.out.println("Asignatura no encontrada...");
 			return null;
 		}
-		
-		System.out.println("Selecciona un Profesor...");
+
+		System.out.println("\nSelecciona un profesor de la base de datos...");
 		ArrayList<Profesor> profesores = connection.ReadAllProfesores();
 		if (profesores.size() == 0) {
 			System.out.println("No hay Profesores en la base de datos...");
 			return null;
 		}
-		System.out.println("Selecciona un profesor de la base de datos...\n");
 		
 		profesores.forEach(p->System.out.println(p));
 
-		System.out.print("\nMarca el dni del profesor: ");
+		System.out.print("Marca el dni del profesor: ");
 		Profesor profesor = connection.ReadProfesor(scan.nextLine());
 		
 		if (profesor == null) {

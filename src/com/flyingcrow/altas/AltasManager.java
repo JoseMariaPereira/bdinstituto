@@ -53,17 +53,16 @@ public class AltasManager {
 				System.out.println("Creando nueva relacion...");
 				Ternaria t = AltaTernaria.AltaDeTernaria(scan, connection);
 				if (t != null) {
-					
+					connection.InsertTernaria(t);
 				}
 				break;
 			case "6":
 				System.out.println("Volviendo...");
-				break;
+				return;
 			default:
 				System.out.println(opcion + " no es un valor aceptado, vuelve a intentarlo!\n\n");
-				opcion = "";
 			}
-		} while (opcion.equals(""));
+		} while (true);
 	}
 	
 }

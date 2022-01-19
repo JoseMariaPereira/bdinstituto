@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ import com.flyingcrow.modelo.Alumno;
 import com.flyingcrow.modelo.Asignatura;
 import com.flyingcrow.modelo.Nota;
 import com.flyingcrow.modelo.Profesor;
+import com.flyingcrow.modelo.Ternaria;
 import com.mysql.cj.protocol.Resultset;
 
 public class ConectionManager {
@@ -95,7 +97,26 @@ public class ConectionManager {
 		boolean returnValue = true;
 		try {
 			statement.executeUpdate("insert into profesor values('" + profesor.getDni() +"', '" + profesor.getNombre() + "', '" + profesor.getTitulacion() + "')");
-			System.out.println("Profesor:\n" + profesor + "\n Insertado correctamente");
+			System.out.println("Profesor:\n" + profesor + "\nInsertado correctamente");
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+			returnValue = false;
+		}
+		return returnValue;
+	}
+	
+	/**
+	 * borra un profesor
+	 * 
+	 * @param profesor el profesor a borrar
+	 * @return devuelve true si se ha borrado y false si ha ocurrido algun error
+	 */
+	public boolean DeleteProfesor(Profesor profesor) {
+		boolean returnValue = true;
+		try {
+			statement.executeUpdate("delete from profesor where dni = '" + profesor.getDni() + "'");
+			System.out.println("Profesor:\n" + profesor + "\nBorrado correctamente");
 		} catch (SQLException e) {
 			System.out.println("Ha ocurrido un error...");
 			System.out.println("\n" + e.getMessage());
@@ -127,7 +148,7 @@ public class ConectionManager {
 	public Profesor ReadProfesor(String dni) {
 		Profesor profesor = null;
 		try {
-			ResultSet result = statement.executeQuery("SELECT * FROM profesor WHERE dni = " + dni);
+			ResultSet result = statement.executeQuery("SELECT * FROM profesor WHERE dni = '" + dni + "'");
 			if (result.next()) {
 				profesor = new Profesor(result.getString(1), result.getString(2), result.getString(3));
 			}
@@ -136,6 +157,22 @@ public class ConectionManager {
 			System.out.println("\n" + e.getMessage());
 		}
 		return profesor;
+	}
+	
+	public ArrayList<Asignatura> ReadAsignaturaProfesor(Profesor profesor) {
+		ArrayList<Asignatura> asignaturas = new ArrayList<>();
+		try {
+			ResultSet result = statement.executeQuery("Select distinct pas.dni, asi.idas, asi.codigoasignatura, asi.nombreciclo "
+					+ "From profesoralumnosasignatura as pas right join asignatura as asi on pas.idas = asi.idas "
+					+ "WHERE pas.dni = '" + profesor.getDni() + "'");
+			while (result.next()) {
+				asignaturas.add(new Asignatura(result.getString(2), result.getString(4), result.getString(3)));	
+			}
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+		}
+		return asignaturas;
 	}
 	
 	/**
@@ -148,7 +185,39 @@ public class ConectionManager {
 		boolean returnValue = true;
 		try {
 			statement.executeUpdate("insert into alumno (codigoalumno, nombre) values('" + alumno.getCodigoAlumno() + "', '" + alumno.getNombre() + "')");
-			System.out.println("Alumno:\n" + alumno + "\n Insertado correctamente");
+			System.out.println("Alumno:\n" + alumno + "\nInsertado correctamente");
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+			returnValue = false;
+		}
+		return returnValue;
+	}
+	
+	public ArrayList<Nota> ReadNotasAlumno(Alumno alumno) {
+		ArrayList<Nota> nota = new ArrayList<>();
+		try {
+			ResultSet result = statement.executeQuery("Select distinct * "
+					+ "From notas as n join asignatura as a on n.idas = a.idas "
+					+ "WHERE n.idal = '" + alumno.getIdal() + "'");
+			while (result.next()) {
+				nota.add(new Nota(alumno, 
+						new Asignatura(result.getString(3),result.getString(7),result.getString(6)), 
+						LocalDate.of(Integer.valueOf(result.getString(1).split("-")[0]), Integer.valueOf(result.getString(1).split("-")[1]), Integer.valueOf(result.getString(1).split("-")[2])), 
+						Integer.valueOf(result.getString(4))));	
+			}
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+		}
+		return nota;
+	}
+
+	public boolean DeleteAlumno(Alumno alumno) {
+		boolean returnValue = true;
+		try {
+			statement.executeUpdate("delete from alumno where idal = '" + alumno.getIdal() + "'");
+			System.out.println("Alumno:\n" + alumno + "\nBorrado correctamente");
 		} catch (SQLException e) {
 			System.out.println("Ha ocurrido un error...");
 			System.out.println("\n" + e.getMessage());
@@ -180,7 +249,7 @@ public class ConectionManager {
 	public Alumno ReadAlumno(String idal) {
 		Alumno alumno = null;
 		try {
-			ResultSet result = statement.executeQuery("SELECT * FROM alumno WHERE idal = " + idal);
+			ResultSet result = statement.executeQuery("SELECT * FROM alumno WHERE idal = '" + idal + "'");
 			if (result.next()) {
 				alumno = new Alumno(result.getString(1), result.getString(3), result.getString(2));
 			}
@@ -200,14 +269,30 @@ public class ConectionManager {
 	public boolean InsertAsignatura(Asignatura asignatura) {
 		boolean returnValue = true;
 		try {
-			statement.executeUpdate("insert into asignatura (codigoasignatura, nombreciclo) values('" + asignatura.getCodigoAsugnatura() + "', '" + asignatura.getNombre() + "')");
-			System.out.println("Asignatura:\n" + asignatura + "\n Insertado correctamente");
+			statement.executeUpdate("insert into asignatura (codigoasignatura, nombreciclo) values ('" + asignatura.getCodigoAsugnatura() + "', '" + asignatura.getNombre() + "')");
+			System.out.println("Asignatura:\n" + asignatura + "\nInsertado correctamente");
 		} catch (SQLException e) {
 			System.out.println("Ha ocurrido un error...");
 			System.out.println("\n" + e.getMessage());
 			returnValue = false;
 		}
 		return returnValue;
+	}
+	
+	public ArrayList<Profesor> ReadAsignaturasDeProfesores(Asignatura asignatura) {
+		ArrayList<Profesor> profes = new ArrayList<>();
+		try {
+			ResultSet result = statement.executeQuery("Select distinct pas.idas, p.dni, p.nombre, p.titulacion "
+					+ "From profesoralumnosasignatura as pas join profesor as p on p.dni = pas.dni "
+					+ "WHERE pas.idas = '" + asignatura.getIdas() + "'");
+			while (result.next()) {
+				profes.add(new Profesor(result.getString(2), result.getString(3), result.getString(4)));	
+			}
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+		}
+		return profes;
 	}
 	
 	/**
@@ -233,7 +318,7 @@ public class ConectionManager {
 	public Asignatura ReadAsignatura(String idas) {
 		Asignatura asignatura = null;
 		try {
-			ResultSet result = statement.executeQuery("SELECT * FROM asignatura * WHERE idas = " + idas);
+			ResultSet result = statement.executeQuery("SELECT * FROM asignatura WHERE idas = '" + idas + "'");
 			if(result.next()) {
 				asignatura = new Asignatura(result.getString(1), result.getString(3), result.getString(2));
 			}			
@@ -253,8 +338,8 @@ public class ConectionManager {
 	public boolean InsertNota(Nota nota) {
 		boolean returnValue = true;
 		try {
-			statement.executeUpdate("insert into notas values('" + nota.getFecha().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + "', '" + nota.getAlumno().getIdal() + "', '" + nota.getAsignatura().getIdas() + "', '" + nota.getNota() + "')");
-			System.out.println("Nota:\n" + nota + "\n Insertado correctamente");
+			statement.executeUpdate("insert into notas values('" + nota.getFecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "', '" + nota.getAlumno().getIdal() + "', '" + nota.getAsignatura().getIdas() + "', '" + nota.getNota() + "')");
+			System.out.println("Nota:\n" + nota + "\nInsertado correctamente");
 		} catch (SQLException e) {
 			System.out.println("Ha ocurrido un error...");
 			System.out.println("\n" + e.getMessage());
@@ -263,5 +348,23 @@ public class ConectionManager {
 		return returnValue;
 	}
 	
+	/**
+	 * Inserta una relacion ternaria
+	 * 
+	 * @param nota el nota a insertar
+	 * @return devuelve true si se ha insertado y false si ha ocurrido algun error
+	 */
+	public boolean InsertTernaria(Ternaria ternaria) {
+		boolean returnValue = true;
+		try {
+			statement.executeUpdate("insert into profesoralumnosasignatura values('" + ternaria.getProfesor().getDni() + "', '" + ternaria.getAlumno().getIdal() + "', '" + ternaria.getAsignatura().getIdas() + "')");
+			System.out.println("Relacion ternaria insertada correctamente");
+		} catch (SQLException e) {
+			System.out.println("Ha ocurrido un error...");
+			System.out.println("\n" + e.getMessage());
+			returnValue = false;
+		}
+		return returnValue;
+	}
 	
 }

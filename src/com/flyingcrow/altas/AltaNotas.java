@@ -19,19 +19,17 @@ public class AltaNotas {
 			return null;
 		}
 		
-		System.out.println("Selecciona un alumno de la base de datos...\n");
+		System.out.println("Selecciona un alumno de la base de datos...");
 		
 		alumnos.forEach(a->System.out.println(a));
 
-		System.out.print("\nMarca el id del alumno: ");
+		System.out.print("Marca el id del alumno: ");
 		Alumno alumno = connection.ReadAlumno(scan.nextLine());
 		
 		if (alumno == null) {
 			System.out.println("Alumno no encontrado...");
 			return null;
 		}
-		
-		System.out.println("Alumno: " + alumno + " seleccionado!");
 		
 		ArrayList<Asignatura> asignaturas = connection.ReadAllAsignaturas();
 		
@@ -40,7 +38,7 @@ public class AltaNotas {
 			return null;
 		}
 		
-		System.out.println("\nSeleccinoa una asignatura...");
+		System.out.println("\nSelecciona una asignatura...");
 		
 		asignaturas.forEach(a->System.out.println(a));
 		
@@ -61,6 +59,8 @@ public class AltaNotas {
 				System.out.println("Introduce un numero entero del 0 al 10...");
 			}
 		}
+		System.out.println();
+		scan.nextLine();
 		
 		return new Nota(alumno, asignatura, numnota);		
 	}
